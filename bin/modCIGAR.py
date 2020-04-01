@@ -6,14 +6,15 @@ import re
 def Split(cigar):
     #Split CIGAR by pattern and remove '' in list, eg:100M50S to ['100','50'] .
     SplCigarLen=re.split(r'[SHMDI]',cigar)
-    SplCigarLen.remove('')
+    SplCigarLen=list(filter(None, SplCigarLen))
 #   print(SplCigarLen)
 #   FloatSplCigarLen=list(map(float,SplCigarLen))
 #Convert string into integer as they indicate pattren length.
     IntSplCigarLen=list(map(int,SplCigarLen))
     #Split CIGAR to make a list of patterns and remove '', eg:100M50S to ['M','S']
     SplCigarPat=re.split(r'[0123456789]*',cigar)
-    SplCigarPat.remove('')
+    SplCigarPat=list(filter(None, SplCigarPat))
+#   print(SplCigarPat)
     #Calculate length of the reads.
     s=0
     for PatLen in SplCigarLen:

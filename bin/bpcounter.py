@@ -20,9 +20,10 @@ BpList['RelaBpSite']=''
 r=0
 while r < len(BpList):
      CIGAR=BpList['CIGAR'][r]
+     Site=BpList['Site'][r]
      #Acoording to CIGAR pattern, calculate relative breakpoint sites
      chCIGAR=modCIGAR.Split(CIGAR)
-#    print("Row: " + str(r) + " CIGAR: " + CIGAR + ", expected relative breaksite: " + str(chCIGAR))
+     print("Match_start: " + str(Site) + " CIGAR: " + CIGAR + ", expected relative breaksite: " + str(chCIGAR))
      BpList['RelaBpSite'][r]=chCIGAR
      r+=1
 #take a look at the newly generated column

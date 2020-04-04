@@ -6,3 +6,4 @@ set -u
 
 python3 ./bpcounter.py
 Rscript --vanilla ./viewer.R
+

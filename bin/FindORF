@@ -1,0 +1,26 @@
+#!/bin/bash
+
+set -e
+set -u
+#set -o pipefail
+
+INPUT_PATH="$1"
+OUTPUT_PATH="$2"
+BASENAME="`basename -s '.fasta' $1`"
+
+#create a workdirectory in the path ordered in "$2"
+mkdir -p $OUTPUT_PATH/$BASENAME
+cp $1 $OUTPUT_PATH/$BASENAME/input.fasta
+cd $OUTPUT_PATH/$BASENAME
+
+#find orfs and extarct all possible orf on the positive strand into file ".AllORF.fna"
+prodigal -i input.fasta -s ${BASENAME}_all_orf -p
+cat ${BASENAME}_all_orf | sed -e '/^#/d' -e '/^$/d' -e '/^Beg/d' | awk '$3=="+"' | cut -f 1,2 | tr '\t' '-' > ${BASENAME}_ORFList
+rm ${BASENAME}_all_orf
+samtools faidx input.fasta
+header=`cat input.fasta.fai | head -1 | cut -f 1`
+for ORF in `cat ${BASENAME}_ORFList`
+do      
+        samtools faidx input.fasta $header:$ORF >> ${BASENAME}.AllORF.fna
+done    
+

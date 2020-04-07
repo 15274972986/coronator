@@ -4,6 +4,26 @@ set -e
 set -u
 #set -o pipefail
 
+SRA_PATH=$1
+TIME_START="`date +%F-%T`"
+LEADING_SEQ="$3"
+
+for sra in `ls $SRA_PATH | xargs basename -s '.fastq.gz' | sed 's/_[1,2]//g' | sort | uniq`
+do
+mkdir -p ../outputdir/$TIME_START/$sra
+cd ../outputdir/$TIME_START/$sra
+if [ `ls $SRA_PATH | grep "$sra" | wc -l` -eq 2 ]
+then bwa mem ../../../reference/$2 $SRA_PATH/${sra}_1.fastq.gz $SRA_PATH/${sra}_2.fastq.gz | samtools view -bS | samtools sort -o align.out.sorted.bam
+else bwa mem ../../../reference/$2 $SRA_PATH/${sra}_1.fastq.gz | samtools view -bS | samtools sort -o align.out.sorted.bam
+fi
+samtools index align.out.sorted.bam align.out.sorted.bai
+samtools view align.out.sorted.bam MT121215.1 | awk '$6~/[S,H]/&&$10~'"/$LEADING_SEQ/"'{print $1"\t"$4"\t"$6}' >> ../MapsWithBreakPointSite
+cd ../../
+done
+cp $TIME_START/MapsWithBreakPointSite ../inputdir/
+cd ../bin
 python3 ./bpcounter.py
 Rscript --vanilla ./viewer.R
+cp ../outputdir/PiedBpSites.pdf ../outputdir/$TIME_START/
+cp ../outputdir/DataforR ../outputdir/$TIME_START/
 

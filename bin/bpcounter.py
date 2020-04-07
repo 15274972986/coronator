@@ -6,7 +6,7 @@ import modCIGAR
 #from pandas import Series
 
 #input filename
-FileName='../inputdir/test'
+FileName='../inputdir/MapsWithBreakPointSite'
 
 #read the file
 BpList=pd.read_csv(FileName,sep='\t',header=None)
